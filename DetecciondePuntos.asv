@@ -33,24 +33,19 @@ obstaculos = centers;           % x1=165 y1=206 x2=198 y2=299 x3=95 y3=141
 meta=[round(metaXc) round(metaYc)];
 movil=[round(movilXc) round(movilYc)];
 % 
-M=zeros(columnas,filas);
+M=zeros(filas);
 % 
  for i=1:length(obstaculos)
-     M= M + campopot(obstaculos(i,1),obstaculos(i,2),10,M);
+     M= M + campopot(2*obstaculos(i,1),2*obstaculos(i,2),10,M);
  end
-% Graficamos la meta junto con los obstaculos. 
-M = M-campopot(meta(1),meta(2),190,M);
+% Graficamos la meta
+M = M-campopot(2*meta(2),2*meta(1),190,M);
 figure,mesh(M);
-
-%Obtencion de la matriz de velocidades.
-[x,y]=meshgrid(1:filas,1:columnas);
+[x,y]=meshgrid([1:tam],[1:tam]);
 [Gx,Gy]=gradient(-M);
 figure,quiver(x,y,Gx,Gy);
-
-% Imagen donde se simulara el movimiento 
+% G = sqrt(Gx.^2+Gy.^2);
 figure, imshow(ima);
-
-% Posicion inicial del movil.
 c1 = movil(1);
 c2 = movil(2);
 Gx(c1,c2);
@@ -63,20 +58,19 @@ while(c1~=double(0) && c2~=double(0)) %Condición de encuentro de valle.
     viscircles(centers,radii,'Color','g'); % Dibujar circulo
     drawnow
     pause(.1)
-    vy = Gx(c1,c2);                 % Evaluacion del campo potencial en la nueva posicin
-    vx = Gy(c1,c2);
-    %fprintf('%f y %f es %d y %d\r\n',vx,vy,c1,c2);
-    
-    % Algortimo para el movimiento
+    vx = Gx(c1,c2);                 % Los datos de retorno de la funcion estan invertidos
+    vy = Gy(c1,c2);
+    fprintf('%f y %f es %d y %d\r\n',vx,vy,c1,c2);
+    % Coordenadas para el movimiento
     if vx<=0
-        c1=c1-2;
+        c1=c1-1;
     else
-        c1=c1+2;
+        c1=c1+1;
     end
     if vy<=0
-        c2=c2-2;
+        c2=c2-1;
     else
-        c2=c2+2;
+        c2=c2+1;
     end
 
     if iter >=400
