@@ -57,6 +57,10 @@ Gx(c1,c2);
 Gy(c1,c2);
 radii = 2;
 iter = 0;
+world = vrworld('modelo.wrl'); 
+open(world);
+fig = view(world, '-internal'); 
+vrdrawnow;
 while(c1~=double(0) && c2~=double(0)) %Condición de encuentro de valle.
     iter = iter + 1;
     centers = [c1 c2];
@@ -82,4 +86,10 @@ while(c1~=double(0) && c2~=double(0)) %Condición de encuentro de valle.
     if iter >=400
         break;
     end
+    world.Exported_transform.translation=[c1/10 -0.26 c2/10]; 
+    %Cambia la propiedad de rotación del carro
+    world.Exported_transform.rotation=[0 0 0 66];
+    vrdrawnow;
 end
+
+
