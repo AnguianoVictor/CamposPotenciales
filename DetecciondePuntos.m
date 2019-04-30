@@ -1,4 +1,6 @@
-clc, clear, close all
+clc
+clear
+close all
 % Lectura de imagen y muestra
 ima=imread('Negro1.bmp');
 %figure,imshow(ima);
