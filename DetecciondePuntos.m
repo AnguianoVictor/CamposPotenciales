@@ -40,7 +40,7 @@ clc,clear,close all
 %Obtencion de la matriz de velocidades.
     [x,y]=meshgrid(1:filas,1:columnas);
     [Gx,Gy]=gradient(-M);
-    %figure,quiver(x,y,Gx,Gy);
+    figure,quiver(x,y,Gx,Gy);
 % Posicion inicial del movil.
     c1 = movil(1);
     c2 = movil(2);
@@ -55,7 +55,7 @@ clc,clear,close all
     fig.Children.Visible = 'off';
     fig.Children.Clipping = 'off';
     fig.Children.Projection = 'orthographic';
-
+    set(gcf, 'Position', get(0,'Screensize'));
 % Se agrega el objeto STL
 stl = stlread('test.stl');                       %Se lee los datos del objeto
                                                 %y se guarda en la variable fv
@@ -75,13 +75,16 @@ material('metal')           %Se le da la propiedad de color metalico
 % Se agrega la propiedad de luz a la camara. 
     camlight('headlight');
 % Valor del angulo de vision
-    camva(55); 
+    camva(60); 
+    camzoom(1)
 
 % Variables de rotación y posicion inicial
+angulos = (atan2(Gy,Gx));
 rot = eye(3,3); %Initial plane rotation
-pos = [c1*7, c2*7,130]; %Initial plane position
+pos = [c1*7, c2*7,100]; %Initial plane position
 hold off
-axis([100 340 100 340 110 230])
+axis([0 250 0 250 150 310])
+
 
 p1.Vertices = (rot*vert')' + repmat(pos,[size(vert,1),1]);
 while(c1~=double(0) && c2~=double(0)) %Condición de encuentro de valle.
@@ -91,22 +94,23 @@ while(c1~=double(0) && c2~=double(0)) %Condición de encuentro de valle.
     vx = Gy(c1,c2);
     % Algortimo para el movimiento
     if vx<=0
-        c1=c1-2;
+        c1=c1-1;
     else
-        c1=c1+2;
+        c1=c1+1;
     end
     if vy<=0
-        c2=c2-2;
+        c2=c2-1;
     else
-        c2=c2+2;
+        c2=c2+1;
     end
-    
+    %rot = rot*angle2dcm(angulos(c1,c2),0,0);
+    rot=angle2dcm(deg2rad(270)+angulos(c1,c2),0,0);
     pos = [7*c1 7*c2 130];
     p1.Vertices = (rot*vert')' + repmat(pos,[size(vert,1),1]);
-    if iter >=120
+%     campos(pos + [-500,500,50]);%3000*abs(pos-campos)/norm(pos-campos));
+%     camtarget(pos);
+    if iter >=240
         break;
     end
-    pause(.1)
+    pause(0.1)
 end
-
-

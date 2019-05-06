@@ -40,7 +40,7 @@ clc,clear,close all
 %Obtencion de la matriz de velocidades.
     [x,y]=meshgrid(1:filas,1:columnas);
     [Gx,Gy]=gradient(-M);
-    %figure,quiver(x,y,Gx,Gy);
+    figure,quiver(x,y,Gx,Gy);
 % Posicion inicial del movil.
     c1 = movil(1);
     c2 = movil(2);
@@ -57,64 +57,56 @@ clc,clear,close all
     fig.Children.Projection = 'orthographic';
 
 % Se agrega el objeto STL
-fv = stlread('test.stl');                       %Se le los datos del objeto
-                                                %en la variable fv
-p1 = patch(fv,'FaceColor',       'blue', ...
-         'EdgeColor',       'none',        ...
-         'FaceLighting',    'gouraud',     ...
-         'AmbientStrength', 0.15);
-vert = p1.Vertices;
+stl = stlread('test.stl');                       %Se lee los datos del objeto
+                                                %y se guarda en la variable fv
+p1 = patch(stl,'FaceColor',       'yellow', ...  %Se le da color amarillo 
+         'EdgeColor',       'none',        ... %Color de bordes
+         'FaceLighting',    'gouraud',     ...   %Iluminacion de curvas
+         'AmbientStrength', 0.15);               %Iluminacion del entorno
+vert = p1.Vertices;                         %Se guarda todos los vertices del objeto stl
 material('metal')           %Se le da la propiedad de color metalico
-
-% Se agrega la textura que es la imagen que se tomo de los obstaculos. 
-texture = imread('Negro1.bmp');
-ground = ones(81);
-groundSurf = surf(linspace(1,293*7,size(ground,1)),linspace(1,391*7,size(ground,2)),ground,'LineStyle','none','AmbientStrength',0.3,'DiffuseStrength',0.8,'SpecularStrength',0,'SpecularExponent',10,'SpecularColorReflectance',1);
-groundSurf.FaceColor = 'texturemap';
-groundSurf.CData = texture;
+% Se genera una superficie con la textura de la imagen tomada. 
+    texture = imread('Negro1.bmp');
+    ground = ones(2);
+    groundSurf = surf(linspace(1,293*7,size(ground,1)),linspace(1,391*7,size(ground,2)),ground,'LineStyle','none','AmbientStrength',0.3,'DiffuseStrength',0.8,'SpecularStrength',0,'SpecularExponent',10,'SpecularColorReflectance',1);
+    groundSurf.FaceColor = 'texturemap';
+    groundSurf.CData = texture;
 
 % Se agrega la propiedad de luz a la camara. 
-camlight('headlight');
+    camlight('headlight');
+% Valor del angulo de vision
+    camva(55); 
 
-camva(60); %view angle
- 
-forwardVec = [0 0 0]'; %Vector of the plane's forward direction in plane frame
+% Variables de rotación y posicion inicial
+angulos = (atan2(Gy,Gx));
 rot = eye(3,3); %Initial plane rotation
 pos = [c1*7, c2*7,130]; %Initial plane position
-vel = 1000; %Velocity
-
 hold off
 axis([100 340 100 340 110 230])
 
-%p1.Vertices = (rot*vert')' + repmat(pos,[size(vert,1),1]);
+p1.Vertices = (rot*vert')' + repmat(pos,[size(vert,1),1]);
 while(c1~=double(0) && c2~=double(0)) %Condición de encuentro de valle.
     iter = iter + 1;
     centers = [c1 c2];
-    %viscircles(centers,radii,'Color','g'); % Dibujar circulo
-    %drawnow
-    
     vy = Gx(c1,c2);                 % Evaluacion del campo potencial en la nueva posicin
     vx = Gy(c1,c2);
-    %fprintf('%f y %f es %d y %d\r\n',vx,vy,c1,c2);
-    
     % Algortimo para el movimiento
     if vx<=0
-        c1=c1-2;
+        c1=c1-1;
     else
-        c1=c1+2;
+        c1=c1+1;
     end
     if vy<=0
-        c2=c2-2;
+        c2=c2-1;
     else
-        c2=c2+2;
+        c2=c2+1;
     end
-    
+    %rot = rot*angle2dcm(angulos(c1,c2),0,0);
+    rot=angle2dcm(angulos(c1,c2),0,0);
     pos = [7*c1 7*c2 130];
     p1.Vertices = (rot*vert')' + repmat(pos,[size(vert,1),1]);
-    if iter >=120
+    if iter >=420
         break;
     end
-    pause(.1)
+    pause(0.1)
 end
-
-
