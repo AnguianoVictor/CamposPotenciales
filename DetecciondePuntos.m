@@ -33,7 +33,7 @@ clc,clear,close all
     M=zeros(columnas,filas);    
 % Colocación de gaussianas en las coordenadas de los obstaculos
      for i=1:length(obstaculos)
-         M= M + campopot(obstaculos(i,1),obstaculos(i,2),10,M);
+         M= M + campopot(obstaculos(i,1),obstaculos(i,2),14,M);
      end
 % Graficamos la meta junto con los obstaculos. 
     M = M-campopot(meta(1),meta(2),190,M);
@@ -81,7 +81,7 @@ material('metal')           %Se le da la propiedad de color metalico
 % Variables de rotación y posicion inicial
 angulos = (atan2(Gy,Gx));
 rot = eye(3,3); %Initial plane rotation
-pos = [c1*7, c2*7,100]; %Initial plane position
+pos = [c1*7, c2*7,5]; %Initial plane position
 hold off
 axis([0 250 0 250 150 310])
 
